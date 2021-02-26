@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import Cookies from 'js-cookie';
+
 import './App.css';
 
 // const base_url = "https://django-text-arcadephoto.herokuapp.com"
@@ -11,6 +13,10 @@ class App extends Component {
         textInput: [],
         editInput: [],
         editID: "",
+        username: '',
+        email: '',
+        password1: '',
+        password2: '',
       }
 
 
@@ -62,6 +68,25 @@ delete(){
     })
 }
 
+async handleRegistration(e, obj){
+e.preventDefault();
+
+const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': Cookies.get('csrftoken'),
+    },
+    body: JSON.stringify(obj),
+};
+const handleError = (err) => console.warn(err);
+const response = await fetch('/rest-auth/registration/', options);
+const data = await response.json().catch(handleError);
+
+if(data.key) {
+Cookies.set('Authorization', `Token ${data.key}`);
+}
+}
 
 
   render(){
@@ -77,15 +102,28 @@ delete(){
        </form>
 
 
-     const editButton = <form onSubmit={this.edit}>
-        <label htmlFor="editText"></label>
-        <input placeholder="txt id" id="editID" name="editID" value={this.state.editID} onChange={this.handleChange}/>
-        <input type="text" placeholder="Edit text here" id="editText" name="editInput" value={this.state.editInput} onChange={this.handleChange}/>
-        <button className="btn genbtn" type="submit">Send your edit</button>
-        </form>
+   const editButton = <form onSubmit={this.edit}>
+      <label htmlFor="editText"></label>
+      <input placeholder="txt id" id="editID" name="editID" value={this.state.editID} onChange={this.handleChange}/>
+      <input type="text" placeholder="Edit text here" id="editText" name="editInput" value={this.state.editInput} onChange={this.handleChange}/>
+      <button className="btn genbtn" type="submit">Send your edit</button>
+      </form>
 
-      const deleteButton = <form onSubmit={this.delete}>
-        <button type="submit" id="delete" name="delete">Delete!</button></form>
+    const deleteButton = <form onSubmit={this.delete}>
+      <button type="submit" id="delete" name="delete">Delete!</button></form>
+
+
+
+  const form = (<form onSubmit={(e) => this.handleRegistration(e, this.state)}>
+      <input type="text" placeholder="username" name="username" value={this.state.username} onChange={this.handleInput}/>
+      <input type="email" placeholder="email" name="email" value={this.state.email} onChange={this.handleInput}/>
+      <input type="password" placeholder="password" name="password1" value={this.state.password1} onChange={this.handleInput}/>
+      <input type="password" placeholder="confirm pass" name="password2" value={this.state.password2} onChange={this.handleInput}/>
+      <button type="submit">Submit yo bidness!</button>
+      </form>)
+
+
+
 
 
   return (
@@ -93,6 +131,7 @@ delete(){
       {textButton}
       {editButton}
       {deleteButton}
+      {form}
       {text}
     </div>
   );
