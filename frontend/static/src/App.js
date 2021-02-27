@@ -46,34 +46,42 @@ componentDidMount(){
     }
 
 
-submit(){
+submit(event){
+  event.preventDefault()
   fetch("/api/v1/chatapp/post/", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
       },
-      body: JSON.stringify({text: this.state.textInput, owner: this.state.username, room: this.state.room }),
+      body: JSON.stringify({text: this.state.textInput, owner: this.state.username, room: this.state.room}),
     })
+    .then(response => response.json())
+    .then(json => console.log(json))
+this.setState({username: "", room: "", textInput: ""})
 }
 
-edit(){
+edit(event){
+  event.preventDefault()
   fetch(`/api/v1/chatapp/${this.state.editID}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
       },
       body: JSON.stringify({text: this.state.editInput, id: this.state.editID}),
     })
 }
 
-delete(){
+delete(event){
+  event.preventDefault()
   fetch(`/api/v1/chatapp/${this.state.editID}/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': Cookies.get('csrftoken'),
       },
-      body: JSON.stringify({text: this.state.editInput, id: this.state.editID}),
-    })
+    }).then(response => console.log(response))
 }
 
 async handleRegistration(e, obj){
@@ -146,6 +154,7 @@ this.setState({username: "",})
 
   render(){
     console.log(this.state.text)
+    // console.log(Cookies.get('Authorization'));
 
     const text = this.state.text.map((data) => (
       <section key={data.id}>
@@ -160,6 +169,7 @@ this.setState({username: "",})
        <label htmlFor="sendText"></label>
        <input type="text" placeholder="Input text here" id="sendText" name="textInput" value={this.state.textInput} onChange={this.handleChange}/>
        <input type="text" placeholder="Chatroom Name" id="room" name="room" value={this.state.room} onChange={this.handleChange}/>
+       <input type="text" placeholder="username" name="username" value={this.state.username} onChange={this.handleInput}/>
        <button className="btn genbtn" type="submit">Send your text</button>
        </form>
 
