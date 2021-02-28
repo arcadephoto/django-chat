@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ChatAppListAPIView, ChatAppDetailAPIView, ChatCreateAPIView, ChatUpdateAPIView, ChatDoAll
+from .views import ChatCreateAPIView, ChatDoAll, ChatAppListAPIView
 
 
 
