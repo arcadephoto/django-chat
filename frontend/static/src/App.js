@@ -20,7 +20,7 @@ class App extends Component {
         password2: '',
         password: '',
         isLoggedIn: !!Cookies.get('Authorization'),
-        loggedInUserName: '',
+        loggedInUserName: false,
       }
   this.handleLogout = this.handleLogout.bind(this);
   this.handleRegistration = this.handleRegistration.bind(this);
@@ -47,7 +47,7 @@ componentDidMount(){
 
 
 submit(event){
-  // event.preventDefault()
+  event.preventDefault()
   fetch("/api/v1/chatapp/post/", {
       method: 'POST',
       headers: {
@@ -57,11 +57,11 @@ submit(event){
       body: JSON.stringify({text: this.state.textInput, room: this.state.room}),
     })
     .then(response => response.json())
-// this.setState({username: "", room: "", textInput: ""})
+this.setState({username: "", room: "", textInput: ""})
 }
 
 edit(event){
-  // event.preventDefault()
+  event.preventDefault()
   fetch(`/api/v1/chatapp/${this.state.editID}/`, {
       method: 'PUT',
       headers: {
@@ -73,7 +73,7 @@ edit(event){
 }
 
 delete(target){
-  // event.preventDefault()
+  // event.preventDefault();
   fetch(`/api/v1/chatapp/${target}/`, {
       method: 'DELETE',
       headers: {
@@ -157,10 +157,10 @@ this.setState({username: "",})
 
 
     const text = this.state.text.map((data) => (
-      <section key={data.id}>
+      <section className="card" key={data.id}>
       <p>ID No.: {data.id}</p>
       <p>ChatRoom: {data.room}</p>
-      <p>User: {data.user.username}</p>
+      <p>Sender: {data.user.username}</p>
       <p>Message: {data.text}</p>
       <button type="submit" className="btn btn-primary" onClick={()=> this.delete(data.id)}>Delete</button></section>
     ))
@@ -168,20 +168,17 @@ this.setState({username: "",})
 
     const textButton = <form onSubmit={this.submit}>
        <label htmlFor="sendText"></label>
-       <input type="text" placeholder="Input text here" id="sendText" name="textInput" value={this.state.textInput} onChange={this.handleChange}/>
-       <input type="text" placeholder="Chatroom Name" id="room" name="room" value={this.state.room} onChange={this.handleChange}/>
-       <button className="btn-primary btn" type="submit">Send your text</button>
+       <p><input type="text" placeholder="Input text here" id="sendText" name="textInput" value={this.state.textInput} onChange={this.handleChange}/></p>
+       <p><input type="text" placeholder="Chatroom Name" id="room" name="room" value={this.state.room} onChange={this.handleChange}/></p>
+       <p><button className="btn-primary btn" type="submit">Send your text</button></p>
        </form>
 
    const editButton = <form onSubmit={this.edit}>
       <label htmlFor="editText"></label>
-      <input placeholder="txt id" id="editID" name="editID" value={this.state.editID} onChange={this.handleChange}/>
-      <input type="text" placeholder="Edit text here" id="editText" name="editInput" value={this.state.editInput} onChange={this.handleChange}/>
-      <button className="btn-primary btn" type="submit">Send your edit</button>
+      <p><input placeholder="txt id" id="editID" name="editID" value={this.state.editID} onChange={this.handleChange}/></p>
+      <p><input type="text" placeholder="Edit text here" id="editText" name="editInput" value={this.state.editInput} onChange={this.handleChange}/></p>
+      <p><button className="btn-primary btn" type="submit">Send your edit</button></p>
       </form>
-
-  // const deleteButton = <form onSubmit={this.delete}>
-  //     <button type="submit" id="delete" name="delete">Delete!</button></form>
 
 
 
@@ -204,25 +201,24 @@ this.setState({username: "",})
       <button className="btn-primary" type="submit">Log Out</button>
       </form>)
 
-  const loggedInUserName = <p>Logged in: {this.state.loggedInUserName}</p>
+  const loggedInUserName = <p>Hello, {this.state.loggedInUserName}!</p>
 
   return (
     <div className="container">
+    <div className="row-12 navbar header"><span>{loginForm}</span><span>{this.state.loggedInUserName !== false ? loggedInUserName : null}</span> <span>{this.state.loggedInUserName !== false ? logoutForm : null }</span></div>
     <div className="row">
-    <div className="col-3">{this.state.isLoggedIn === true ? textButton : <p>Please log in</p>}</div>
-    <div className="col-3">{editButton}</div>
-    <div className="col-3">  {registerForm}</div>
-    <div className="col-3">  {loginForm}</div>
+    <div className="col-4 card">{this.state.loggedInUserName !== false ? textButton : <h4>Welcome! Please register or log in!</h4>}</div>
+    <div className="col-4">{this.state.loggedInUserName !== false ? editButton : null}</div>
+    <div className="col-4 card">{registerForm}</div>
     </div>
 
     <div className="row">
-    <div className="col-3">  {logoutForm}</div>
-    <div className="col-3">  {loggedInUserName}</div>
+    <div className="col-3 card"> </div>
 
       </div>
 
       <div className="row">
-      <div className="col-12">  {text}</div>
+      <div className="col-12"> {this.state.loggedInUserName !== false ? text : null }</div>
       </div>
       </div>
   );

@@ -1,3 +1,20 @@
 .container{
+  background-color: lightgray;
   text-align: center;
+}
+
+.card {
+  box-shadow: 5px 5px 5px darkgray;
+}
+.header{
+  background-image: linear-gradient(lightgray, darkgray);
+
+}
+
+input {
+  box-shadow: 3px 3px 3px darkgray;
+}
+
+.btn {
+  box-shadow: 3px 3px 3px darkgray;
 }
