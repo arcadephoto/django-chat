@@ -142,10 +142,10 @@ const handleError = (err) => console.warn(err);
 const response = await fetch('/rest-auth/logout/', options);
 const data = await response.json().catch(handleError);
 
-if(data.key) {
+
 Cookies.remove('Authorization', `Token ${data.key}`);
 this.setState({loggedInUserName: "",});
-}
+
 this.setState({username: "",})
 }
 
