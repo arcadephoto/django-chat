@@ -16,6 +16,8 @@ class ChatAppDetailAPIView(generics.RetrieveAPIView):
     # permission_classes = (permissions.IsAdminUser | IsOwnerOrReadOnly,)
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    # def get_queryset(self):
+    #     return Room.objects.filter(roomname=self.request.roomname)
 
 class ChatCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = (permissions.IsAdminUser | IsOwnerOrReadOnly,)
@@ -39,5 +41,10 @@ class ChatDoAll(generics.RetrieveUpdateDestroyAPIView):
 class RoomListCreateAPIView(generics.ListCreateAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    # def get_queryset(self):
-    #     return Room.objects.filter(room=self.request.roomname)
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
+
+class RoomDoAll(generics.RetrieveUpdateDestroyAPIView):
+    # permission_classes = (permissions.IsAdminUser | IsOwnerOrReadOnly,)
+    queryset = Room.objects.all()
+    serializer_class = MessageSerializer

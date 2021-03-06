@@ -21,6 +21,8 @@ class App extends Component {
         password: '',
         isLoggedIn: !!Cookies.get('Authorization'),
         loggedInUserName: null,
+        roomname: "",
+        roomlist: [],
       }
   this.handleLogout = this.handleLogout.bind(this);
   this.handleRegistration = this.handleRegistration.bind(this);
@@ -29,6 +31,7 @@ class App extends Component {
   this.submit = this.submit.bind(this);
   this.edit = this.edit.bind(this);
   this.delete = this.delete.bind(this);
+  this.createChat = this.createChat.bind(this);
     }
 
 handleInput(event){
@@ -46,6 +49,11 @@ componentDidMount(){
       if(localStorage.getItem('chatUser')){
         this.setState({isLoggedIn: true})};
         this.setState({loggedInUserName: localStorage.getItem('chatUser')})
+
+  fetch("/api/v1/chatapp/room/")
+      .then(response => response.json())
+      .then(response => this.setState({roomlist: response}));
+
       }
 
 
@@ -58,10 +66,10 @@ submit(event){
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken'),
       },
-      body: JSON.stringify({text: this.state.textInput, room: this.state.room}),
+      body: JSON.stringify({text: this.state.textInput}),
     })
     .then(response => response.json())
-this.setState({username: "", room: "", textInput: ""})
+this.setState({username: "", textInput: ""})
 window.location.reload();
 }
 
@@ -158,14 +166,40 @@ this.setState({username: "",})
 }
 
 
+createChat(event){
+    event.preventDefault()
+    fetch("/api/v1/chatapp/room/", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+        body: JSON.stringify({roomname: this.state.roomname}),
+      })
+      .then(response => response.json())
+  }
+
+
+
+
 
   render(){
 
+    const roomlist = this.state.roomlist.map((data) =>(
+
+      <section className="card" key={data.id}>
+          <p>{data.roomname}</p>
+          </section>
+        ))
+
+    const createChat = (<div>
+<input type="text" placeholder="Name of new chatroom" id="roomname" name="roomname" value={this.state.roomname} onChange={this.handleChange}/>
+    <button onClick={this.createChat}>Create Chat Room</button></div>)
+
     const text = this.state.text.map((data) => (
       <section className="card" key={data.id}>
-      <p>ID No.: {data.id}</p>
-      <p>ChatRoom: {data.room}</p>
-      <p>Sender: {data.user.username}</p>
+      <p>ChatRoom: {data.roomname}</p>
+      <p>Sender: {data.user}</p>
       <p>Message: {data.text}</p>
       <button type="submit" className="btn btn-primary" onClick={()=> this.delete(data.id)}>Delete</button></section>
     ))
@@ -174,7 +208,6 @@ this.setState({username: "",})
     const textButton = <form onSubmit={this.submit}>
        <label htmlFor="sendText"></label>
        <p><input type="text" placeholder="Input text here" id="sendText" name="textInput" value={this.state.textInput} onChange={this.handleChange}/></p>
-       <p><input type="text" placeholder="Chatroom Name" id="room" name="room" value={this.state.room} onChange={this.handleChange}/></p>
        <p><button className="btn-primary btn" type="submit">Send your text</button></p>
        </form>
 
@@ -216,7 +249,7 @@ this.setState({username: "",})
     <div className="row">
     <div className="col-4 card">{this.state.isLoggedIn !== false ? textButton : <h4>Welcome! Please register or log in!</h4>}</div>
     <div className="col-4">{this.state.isLoggedIn !== false ? editButton : null}</div>
-    <div className="col-4 card">{registerForm}</div>
+    <div className="col-4 card">{!localStorage.getItem('chatUser') ? registerForm : null}</div>
     </div>
 
     <div className="row">
@@ -224,8 +257,10 @@ this.setState({username: "",})
 
       </div>
 
-      <div className="row">
-      <div className="col-12"> {this.state.isLoggedIn !== false ? text : null }</div>
+      <div className="row">{createChat}
+      <div className="col-9"> {this.state.isLoggedIn !== false ? text : null }</div>
+      <div className="col-3"><h4>Available Chatrooms</h4>
+      {roomlist}</div>
       </div>
       </div>
   );
