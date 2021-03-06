@@ -20,7 +20,7 @@ class App extends Component {
         password2: '',
         password: '',
         isLoggedIn: !!Cookies.get('Authorization'),
-        loggedInUserName: false,
+        loggedInUserName: null,
       }
   this.handleLogout = this.handleLogout.bind(this);
   this.handleRegistration = this.handleRegistration.bind(this);
@@ -43,7 +43,11 @@ componentDidMount(){
   fetch("/api/v1/chatapp/chat/")
       .then(response => response.json())
       .then(response => this.setState({text: response}));
-    }
+      if(localStorage.getItem('chatUser')){
+        this.setState({isLoggedIn: true})};
+        this.setState({loggedInUserName: localStorage.getItem('chatUser')})
+      }
+
 
 
 submit(event){
@@ -58,6 +62,7 @@ submit(event){
     })
     .then(response => response.json())
 this.setState({username: "", room: "", textInput: ""})
+window.location.reload();
 }
 
 edit(event){
@@ -121,10 +126,11 @@ const data = await response.json().catch(handleError);
 
 if(data.key) {
 Cookies.set('Authorization', `Token ${data.key}`);
-this.setState({loggedInUserName: this.state.username})
+localStorage.setItem('chatUser', this.state.username)
 }
 
 this.setState({username: "", password: "",})
+window.location.reload()
 }
 
 async handleLogout(e, obj){
@@ -144,6 +150,8 @@ const data = await response.json().catch(handleError);
 
 
 Cookies.remove('Authorization', `Token ${data.key}`);
+localStorage.removeItem('chatUser')
+this.setState({isLoggedIn: false});
 this.setState({loggedInUserName: "",});
 
 this.setState({username: "",})
@@ -152,9 +160,6 @@ this.setState({username: "",})
 
 
   render(){
-    console.log(this.state.text)
-    // console.log(Cookies.get('Authorization'));
-
 
     const text = this.state.text.map((data) => (
       <section className="card" key={data.id}>
@@ -197,7 +202,6 @@ this.setState({username: "",})
       </form>)
 
   const logoutForm = (<form onSubmit={(e) => this.handleLogout(e, this.state)}>
-      <input type="text" placeholder="username" name="username" value={this.state.username} onChange={this.handleInput}/>
       <button className="btn-primary" type="submit">Log Out</button>
       </form>)
 
@@ -205,10 +209,13 @@ this.setState({username: "",})
 
   return (
     <div className="container">
-    <div className="row-12 navbar header"><span>{loginForm}</span><span>{this.state.loggedInUserName !== false ? loggedInUserName : null}</span> <span>{this.state.loggedInUserName !== false ? logoutForm : null }</span></div>
+    <div className="row-12 navbar header"><h1>Chat 'Em Up!</h1><p>The professional and totally functional chat app</p>
+    <span>{this.state.isLoggedIn === false ? loginForm : null}</span><span>{this.state.isLoggedIn !== false ? logoutForm : null }</span>
+    {this.state.loggedInUserName ? loggedInUserName : null}
+    </div>
     <div className="row">
-    <div className="col-4 card">{this.state.loggedInUserName !== false ? textButton : <h4>Welcome! Please register or log in!</h4>}</div>
-    <div className="col-4">{this.state.loggedInUserName !== false ? editButton : null}</div>
+    <div className="col-4 card">{this.state.isLoggedIn !== false ? textButton : <h4>Welcome! Please register or log in!</h4>}</div>
+    <div className="col-4">{this.state.isLoggedIn !== false ? editButton : null}</div>
     <div className="col-4 card">{registerForm}</div>
     </div>
 
@@ -218,7 +225,7 @@ this.setState({username: "",})
       </div>
 
       <div className="row">
-      <div className="col-12"> {this.state.loggedInUserName !== false ? text : null }</div>
+      <div className="col-12"> {this.state.isLoggedIn !== false ? text : null }</div>
       </div>
       </div>
   );

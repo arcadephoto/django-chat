@@ -35,11 +35,9 @@ class ChatDoAll(generics.RetrieveUpdateDestroyAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(owner=self.request.user)
 
-class RoomListAPIView(generics.ListAPIView):
+class RoomListCreateAPIView(generics.ListCreateAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    def get_queryset(self):
-        return Room.objects.filter(room=self.request.room)
+    # def get_queryset(self):
+    #     return Room.objects.filter(room=self.request.roomname)
