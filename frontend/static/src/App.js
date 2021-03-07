@@ -23,6 +23,7 @@ class App extends Component {
         loggedInUserName: null,
         roomname: "",
         roomlist: [],
+        currentRoom: "",
       }
   this.handleLogout = this.handleLogout.bind(this);
   this.handleRegistration = this.handleRegistration.bind(this);
@@ -32,6 +33,7 @@ class App extends Component {
   this.edit = this.edit.bind(this);
   this.delete = this.delete.bind(this);
   this.createChat = this.createChat.bind(this);
+  this.roomClick = this.roomClick.bind(this);
     }
 
 handleInput(event){
@@ -179,18 +181,22 @@ createChat(event){
       .then(response => response.json())
   }
 
-
+roomClick(data){
+  this.setState({currentRoom: data.roomname})
+  console.log(this.state.currentRoom)
+}
 
 
 
   render(){
 
+    console.log(this.state.text)
 
     const roomlist = this.state.roomlist.map((data) =>(
 
-      <section className="card" key={data.id}>
-          <p>{data.roomname}</p>
-          </section>
+      <ul> <li title={data.roomname} onClick={()=>this.roomClick(data)} className="card" key={data.id}>
+          <p>{data.roomname}</p></li>
+          </ul>
         ))
 
     const createChat = (<div>
@@ -198,11 +204,12 @@ createChat(event){
     <button onClick={this.createChat}>Create Chat Room</button></div>)
 
     const text = this.state.text.map((data) => (
-      <section className="card" key={data.id}>
+      <ul>
+      <li className="card" key={data.id}>
       <p>ChatRoom: {data.roomname}</p>
       <p>Sender: {data.user}</p>
       <p>Message: {data.text}</p>
-      <button type="submit" className="btn btn-primary" onClick={()=> this.delete(data.id)}>Delete</button></section>
+      <button type="submit" className="btn btn-primary" onClick={()=> this.delete(data.id)}>Delete</button></li></ul>
     ))
 
 

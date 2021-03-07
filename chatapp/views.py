@@ -40,7 +40,7 @@ class ChatDoAll(generics.RetrieveUpdateDestroyAPIView):
 class RoomListCreateAPIView(generics.ListCreateAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    
+
 
 class RoomDoAll(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = (permissions.IsAdminUser | IsOwnerOrReadOnly,)

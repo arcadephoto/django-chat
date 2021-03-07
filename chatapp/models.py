@@ -10,9 +10,8 @@ class Room(models.Model):
 
 class Message(models.Model):
     text = models.CharField(max_length=255)
-    # channel = models.CharField(max_length=255, default=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    roomname = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,)
+    roomname = models.ForeignKey(Room, on_delete=models.CASCADE, null=True,)
 
     def __str__(self):
         return self.text[:50]

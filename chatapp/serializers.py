@@ -8,10 +8,12 @@ from .models import Message, Room
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ('id', 'text', 'user', 'roomname')
+        
+
 
 
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ('roomname',)
+        fields = '__all__'
