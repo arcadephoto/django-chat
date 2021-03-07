@@ -6,7 +6,7 @@ from .models import Message, Room
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    roomname = serializers.CharField(source="roomname.roomname", default=True)
+    roomname = serializers.ReadOnlyField(source="roomname.roomname", default="General")
     user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
