@@ -6,10 +6,14 @@ from .models import Message, Room
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    roomname = serializers.CharField(source="roomname.roomname", default=True)
+    user = serializers.ReadOnlyField(source='user.username')
+
     class Meta:
+
         model = Message
-        fields = ('id', 'text', 'user', 'roomname')
-        
+        fields = '__all__'
+
 
 
 
